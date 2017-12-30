@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="byeMess:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/byeMess_jar</output-path>
+    <root id="archive" name="byeMess.jar">
+      <element id="module-output" name="byeMess" />
+    </root>
+  </artifact>
+</component>
