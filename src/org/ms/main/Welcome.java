@@ -27,6 +27,7 @@ public class Welcome {
         ButtonListener btnListener = new ButtonListener(jTextField);
         btn1.addActionListener(btnListener);
 
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setVisible(true);
     }
 
