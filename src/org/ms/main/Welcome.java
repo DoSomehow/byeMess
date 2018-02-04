@@ -2,50 +2,61 @@ package org.ms.main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by Ryan on 2017/11/14.
  */
 public class Welcome {
 
+    boolean packFrame = false;
+
+    public Welcome(){
+        MainFrame frame = new MainFrame();
+        if (this.packFrame){
+            frame.pack();
+        }else{
+            frame.validate();
+        }
+        //屏幕居中
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = frame.getSize();
+        if (frameSize.height > screenSize.height){
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width){
+            frameSize.width = screenSize.width;
+        }
+        frame.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+        //显示
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
-        JFrame jFrame = new JFrame();
-        jFrame.setTitle("Welcome!");
-        jFrame.setSize(400, 400);
-        jFrame.setLayout(new FlowLayout());
+        try{
+            //校验jdk版本
+            String version = System.getProperty("java.vm.version");
+            if(version != null){
+                try{
+                    int i = version.indexOf('.');
+                    int v1 = Integer.parseInt(version.substring(0, i));
+                    int j = version.indexOf('.', i + 1);
+                    int v2 = Integer.parseInt(version.substring(i + 1, j));
+                    if ((v1 < 1) || ((v1 == 1) && (v2 < 3))){
+                        JOptionPane.showMessageDialog(null, "Need Java VM version 1.3 or later.", "ERROR", 0);
+                        System.exit(-1);
+                    }
+                }catch (Exception ex){
 
-        JButton btn1 = new JButton("test");
-        jFrame.add(btn1);
-
-        JButton btn2 = new JButton("显示不");
-        jFrame.add(btn2);
-
-        JTextField jTextField = new JTextField(10);
-        jFrame.add(jTextField);
-        ButtonListener btnListener = new ButtonListener(jTextField);
-        btn1.addActionListener(btnListener);
-
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setVisible(true);
-    }
-
-    static class ButtonListener implements ActionListener{
-        private JTextField jTextField;
-
-        public ButtonListener(JTextField jTextField){
-            this.jTextField = jTextField;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String content = jTextField.getText();
-            String newContext = "";
-            if(content == null || "".equals(content)){
-                newContext = ((JButton)e.getSource()).getText();
+                }
             }
-            jTextField.setText(newContext);
+            //设置皮肤
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+
+            //start
+            new Welcome();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
+
 }

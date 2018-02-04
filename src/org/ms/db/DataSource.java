@@ -1,4 +1,6 @@
-package org.ms.main;
+package org.ms.db;
+
+import org.ms.util.Global;
 
 import java.sql.*;
 
@@ -8,39 +10,38 @@ public class DataSource {
     private String user;
     private String pwd;
 
-    private Connection con = null; // 创建一个数据库连接
+    private Connection connection = null; // 创建一个数据库连接
     private PreparedStatement pre = null; // 创建预编译语句对象，一般都是用这个而不用Statement
     private ResultSet result = null; // 创建一个结果集对象
 
     public static void main(String[] args) {
-        String url = "jdbc:oracle:" + "thin:@127.0.0.1:1521:orcl"; // 127.0.0.1是本机地址，XE是精简版Oracle的默认数据库名
-        String user = "stone"; // 用户名,系统默认的账户名
-        String password = "shitou"; // 你安装时选设置的密码
-
-        String sql = "select * from persons where psex = ?"; // 预编译语句，“？”代表参数
+        String sql = "select * from student where sex = ?"; // 预编译语句，“？”代表参数
         Object[] params = new Object[]{
-                "男"
+                "01"
         };
 
-        DataSource ds = new DataSource(url, user, password);
+        DataSource ds = new DataSource();
         ds.query(sql, params);
 
     }
 
-    public DataSource(String url, String user, String pwd){
-        this.url = url;
-        this.user = user;
-        this.pwd = pwd;
-
+    public DataSource(){
+        initConnInfo();
         initConn();
+    }
+
+    private void initConnInfo(){
+        this.url = Global.getPropVal(Global.DB_ORACLE_PROP_KEY_URL); // 127.0.0.1是本机地址，XE是精简版Oracle的默认数据库名
+        this.user = Global.getPropVal(Global.DB_ORACLE_PROP_KEY_USERNAME); // 用户名,系统默认的账户名
+        this.pwd = Global.getPropVal(Global.DB_ORACLE_PROP_KEY_PASSWORD); // 你安装时选设置的密码
     }
 
     private void initConn(){
         try {
-            Class.forName("oracle.jdbc.driver.OracleDriver"); // 加载Oracle驱动程序
+            Class.forName(Global.getPropVal(Global.DB_ORACLE_PROP_KEY_DRIVER_CLASS)); // 加载Oracle驱动程序
             System.out.println("开始尝试连接数据库！");
 
-            con = DriverManager.getConnection(url, user, pwd); // 获取连接
+            connection = DriverManager.getConnection(url, user, pwd); // 获取连接
             System.out.println("连接成功！");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -49,9 +50,23 @@ public class DataSource {
         }
     }
 
+    public boolean isConnSuccess(){
+        boolean isSuccess = false;
+        try {
+            if(this.connection != null){
+                isSuccess = true;
+                this.connection.close();
+                System.out.println("数据库连接已关闭！");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isSuccess;
+    }
+
     public void query(String sql, Object[] params){
         try {
-            pre = con.prepareStatement(sql); // 实例化预编译语句
+            pre = connection.prepareStatement(sql); // 实例化预编译语句
 
             if(params != null && params.length != 0){
                 for (int i = 0; i < params.length; i++) {
@@ -64,7 +79,7 @@ public class DataSource {
             while (result.next()){
                 // 当结果集不为空时
                 StringBuffer sb = new StringBuffer();
-                sb.append("姓名:").append(result.getString("pname"));
+                sb.append("姓名:").append(result.getString("name"));
                 System.out.println(sb.toString());
             }
         } catch (SQLException e) {
@@ -77,8 +92,8 @@ public class DataSource {
                     result.close();
                 if (pre != null)
                     pre.close();
-                if (con != null)
-                    con.close();
+                if (connection != null)
+                    connection.close();
                 System.out.println("数据库连接已关闭！");
             } catch (Exception e) {
                 e.printStackTrace();
