@@ -10,7 +10,7 @@ public class Welcome {
 
     boolean packFrame = false;
 
-    public Welcome(){
+    public Welcome() {
         MainFrame frame = new MainFrame();
         if (this.packFrame){
             frame.pack();

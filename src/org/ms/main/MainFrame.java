@@ -1,152 +1,130 @@
 package org.ms.main;
 
-import org.ms.db.DataSource;
-import org.ms.util.Global;
+import org.ms.code.view.GmoView;
+import org.ms.common.ViewPanel;
+import org.ms.help.view.AboutView;
+import org.ms.view.DsView;
+import org.ms.view.MainView;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame {
 
-    JPanel contentPane;
+    private JPanel mainPane;  //主面板
+    private JPanel viewPane;  //内容面板
 
-    JLabel ipLabel = new JLabel("IP", JLabel.RIGHT);
-    JTextField ipTextField = new JTextField();
-    JLabel portLabel = new JLabel("端口", JLabel.RIGHT);
-    JTextField portTextField = new JTextField("1521");
-    JLabel sidLabel = new JLabel("SID", JLabel.RIGHT);
-    JTextField sidTextField = new JTextField();
-    JLabel userNameLabel = new JLabel("用户名", JLabel.RIGHT);
-    JTextField userNameTextField = new JTextField();
-    JLabel pwdLabel = new JLabel("密码", JLabel.RIGHT);
-    JPasswordField pwdField = new JPasswordField();
-    JButton pingBtn = new JButton("测试");
-    JButton saveBtn = new JButton("保存");
 
-    public MainFrame(){
-        this.contentPane = (JPanel)getContentPane();
-        this.contentPane.setMinimumSize(new Dimension(600, 450));
-        this.contentPane.setPreferredSize(new Dimension(600, 450));
-        this.contentPane.setBorder(new TitledBorder("contentPane"));
-        setContentPane(this.contentPane);
+    public MainFrame() {
+        this.mainPane = (JPanel)getContentPane();
+        this.mainPane.setMinimumSize(new Dimension(600, 450));
+        this.mainPane.setPreferredSize(new Dimension(600, 450));
+        // this.mainPane.setBorder(new TitledBorder("mainPane"));
+        setContentPane(this.mainPane);
         // setResizable(false);
         setSize(new Dimension(600, 450));
         setState(0);  //0时为正常大小，1时为最小化
-        setTitle("byeMess - A Simple Tool For Developer");
+        setTitle("ByeMess - A Simple Tool For Developer");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JMenuBar mb = new JMenuBar();
-        JMenu menu = new JMenu("Test");
-        mb.add(menu);
+        //添加菜单栏
+        JMenuBar mb = initMenuBar();
         setJMenuBar(mb);
 
         //设置布局格式
-        GridBagLayout layout = new GridBagLayout();
-        setLayout(layout);
+        // setLayout(layout);
 
-        //页面组件
-        add(ipLabel);
-        add(ipTextField);
-        add(portLabel);
-        add(portTextField);
-        add(sidLabel);
-        add(sidTextField);
-        add(userNameLabel);
-        add(userNameTextField);
-        add(pwdLabel);
-        add(pwdField);
-        add(pingBtn);
-        add(saveBtn);
-
-        //定义一个GridBagConstraints，是用来控制添加进的组件的显示位置
-        GridBagConstraints gbc= new GridBagConstraints();
-        //该方法是为了设置如果组件所在的区域比组件本身要大时的显示情况
-        //NONE：不调整组件大小。
-        //HORIZONTAL：加宽组件，使它在水平方向上填满其显示区域，但是不改变高度。
-        //VERTICAL：加高组件，使它在垂直方向上填满其显示区域，但是不改变宽度。
-        //BOTH：使组件完全填满其显示区域。
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridwidth = 1;//该方法是设置组件水平所占用的格子数，如果为0，就说明该组件是该行的最后一个
-        gbc.weightx = 0;//该方法设置组件水平的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
-        gbc.weighty = 0;//该方法设置组件垂直的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
-        layout.setConstraints(ipLabel, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(ipTextField, gbc);
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(portLabel, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(portTextField, gbc);
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(sidLabel, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(sidTextField, gbc);
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(userNameLabel, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(userNameTextField, gbc);
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(pwdLabel, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(pwdField, gbc);
-        gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(pingBtn, gbc);
-        gbc.gridwidth = 0;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        layout.setConstraints(saveBtn, gbc);
-
-        //给按钮添加事件
-        pingBtn.addActionListener(new PingListener());
-        saveBtn.addActionListener(new SaveDbConnListener());
+        //加载主视图面板
+        MainView view = new MainView();
+        loadViewPanel(view);
     }
 
-    class PingListener implements ActionListener {
+    //初始化菜单栏
+    private JMenuBar initMenuBar(){
+        JMenuBar menuBar = new JMenuBar();
+
+        /* SQL */
+        JMenu sqlMenu = new JMenu("SQL");
+        JMenuItem aaaItem = new JMenuItem("aaa");
+
+        /* 代码生成 */
+        JMenu codeMenu = new JMenu("代码");
+        JMenuItem gmoItem = new JMenuItem("关口计量");
+
+        menuBar.add(codeMenu);
+        codeMenu.add(gmoItem);
+        gmoItem.addActionListener(new ShowGmoVIewListener());
+
+        /* 通用 */
+        JMenu utilMenu = new JMenu("通用");
+        JMenuItem dsItem = new JMenuItem("数据源配置");
+
+        menuBar.add(utilMenu);
+        utilMenu.add(dsItem);
+        dsItem.addActionListener(new ShowDsViewListener());
+
+        /* 帮助 */
+        JMenu helpMenu = new JMenu("帮助");
+        JMenuItem aboutItem = new JMenuItem("关于");
+
+        menuBar.add(helpMenu);
+        helpMenu.add(aboutItem);
+        aboutItem.addActionListener(new ShowAboutViewListener());
+
+        return menuBar;
+    }
+
+    //加载视图面板
+    private void loadViewPanel(ViewPanel view){
+        //先移除
+        if (viewPane != null) {
+            mainPane.remove(viewPane);
+        }
+        //添加
+        viewPane = view.getViewPane();
+        mainPane.add(viewPane);
+        //
+        // update(getGraphics());
+        validate();
+    }
+
+    //展示数据源视图面板
+    class ShowDsViewListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            DataSource ds = new DataSource();
-            if(ds.isConnSuccess()){
-                JOptionPane.showMessageDialog(null, "连接成功！", "提示", JOptionPane.INFORMATION_MESSAGE);
-            }else{
-                JOptionPane.showMessageDialog(null, "连接失败！", "提示", JOptionPane.ERROR_MESSAGE);
-            }
+            //获取新的
+            DsView view = new DsView();
+
+            //加载该视图面板
+            loadViewPanel(view);
         }
     }
 
-    public class SaveDbConnListener implements ActionListener {
+    //展示关于视图面板
+    class ShowAboutViewListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String ip = ipTextField.getText();
-            String port = portTextField.getText();
-            String sid = sidTextField.getText();
-            String userName = userNameTextField.getText();
-            String pwd = String.valueOf(pwdField.getPassword());
+            //获取新的
+            AboutView view = new AboutView();
 
-            String url = Global.DB_ORACLE_URL_PREFIX + ip + Global.SYMBOL_COLON + port + Global.SYMBOL_COLON + sid;
-            //该写配置文件了，但是要不要写呢？
+            //加载该视图面板
+            loadViewPanel(view);
         }
     }
+
+    //展示gmo视图面板
+    class ShowGmoVIewListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //获取新的
+            GmoView view = new GmoView();
+
+            //加载该视图面板
+            loadViewPanel(view);
+        }
+    }
+
 
 }

@@ -1,6 +1,6 @@
-package org.ms.db;
+package org.ms.common.db;
 
-import org.ms.util.Global;
+import org.ms.common.util.Global;
 
 import java.sql.*;
 
