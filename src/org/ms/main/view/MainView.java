@@ -1,4 +1,4 @@
-package org.ms.view;
+package org.ms.main.view;
 
 import org.ms.common.AbstractViewPanel;
 

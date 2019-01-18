@@ -3,8 +3,8 @@ package org.ms.main;
 import org.ms.code.view.GmoView;
 import org.ms.common.ViewPanel;
 import org.ms.help.view.AboutView;
-import org.ms.view.DsView;
-import org.ms.view.MainView;
+import org.ms.common.view.DsView;
+import org.ms.main.view.MainView;
 
 import javax.swing.*;
 import java.awt.*;

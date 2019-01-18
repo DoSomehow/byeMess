@@ -1,8 +1,14 @@
 package org.ms.common.db;
 
 import org.ms.common.util.Global;
+import org.ms.common.util.JdbcUtil;
+import org.ms.common.util.StringUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataSource {
 
@@ -12,7 +18,7 @@ public class DataSource {
 
     private Connection connection = null; // 创建一个数据库连接
     private PreparedStatement pre = null; // 创建预编译语句对象，一般都是用这个而不用Statement
-    private ResultSet result = null; // 创建一个结果集对象
+    private ResultSet resultSet = null; // 创建一个结果集对象
 
     public static void main(String[] args) {
         String sql = "select * from student where sex = ?"; // 预编译语句，“？”代表参数
@@ -38,15 +44,16 @@ public class DataSource {
 
     private void initConn(){
         try {
-            Class.forName(Global.getPropVal(Global.DB_ORACLE_PROP_KEY_DRIVER_CLASS)); // 加载Oracle驱动程序
-            System.out.println("开始尝试连接数据库！");
+            // Class.forName(Global.getPropVal(Global.DB_ORACLE_PROP_KEY_DRIVER_CLASS)); // 加载Oracle驱动程序
+            // System.out.println("开始尝试连接数据库！");
+            //
+            // connection = DriverManager.getConnection(url, user, pwd); // 获取连接
+            // System.out.println("连接成功！");
 
-            connection = DriverManager.getConnection(url, user, pwd); // 获取连接
-            System.out.println("连接成功！");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            connection = JdbcUtil.getConnection(url, user, pwd);
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e.getMessage(), e);
         }
     }
 
@@ -55,16 +62,40 @@ public class DataSource {
         try {
             if(this.connection != null){
                 isSuccess = true;
-                this.connection.close();
-                System.out.println("数据库连接已关闭！");
+                // this.connection.close();
+                // System.out.println("数据库连接已关闭！");
+
+                JdbcUtil.free(resultSet, pre, connection);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            throw new DaoException(e.getMessage(), e);
         }
         return isSuccess;
     }
 
-    public void query(String sql, Object[] params){
+    /**
+     *
+     * @param sql
+     * @return List<Map<String, Object>>
+     */
+    public List<Map<String, Object>> query(String sql) {
+        return query(sql, null);
+    }
+
+    /**
+     *
+     * @param sql
+     * @param params
+     * @return List<Map<String, Object>>
+     */
+    public List<Map<String, Object>> query(String sql, Object[] params){
+
+        if(StringUtil.isEmpty(sql)){
+            return null;
+        }
+
+        List<Map<String, Object>> dataList = null;
+
         try {
             pre = connection.prepareStatement(sql); // 实例化预编译语句
 
@@ -74,32 +105,33 @@ public class DataSource {
                 }
             }
 
-            result = pre.executeQuery(); // 执行查询，注意括号中不需要再加参数
+            resultSet = pre.executeQuery(); // 执行查询，注意括号中不需要再加参数
 
-            while (result.next()){
-                // 当结果集不为空时
-                StringBuffer sb = new StringBuffer();
-                sb.append("姓名:").append(result.getString("name"));
-                System.out.println(sb.toString());
+            ResultSetMetaData rsmd =  resultSet.getMetaData();  //元数据信息
+            int count = rsmd.getColumnCount();  //字段数量
+            String[] colNameArr = new String[count];  //字段名数组
+
+            for (int i = 0; i < count; i++) {
+                colNameArr[i] = rsmd.getColumnName(i + 1);
+            }
+
+            dataList = new ArrayList<>();
+            while (resultSet.next()){
+                Map<String, Object> dataMap = new HashMap<>();
+                for (int i = 0; i < count; i++) {
+                    String key = colNameArr[i];
+                    Object value = resultSet.getObject(key);
+                    dataMap.put(key, value);
+                }
+                dataList.add(dataMap);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         } finally {
-            try {
-                // 逐一将上面的几个对象关闭，因为不关闭的话会影响性能、并且占用资源
-                // 注意关闭的顺序，最后使用的最先关闭
-                if (result != null)
-                    result.close();
-                if (pre != null)
-                    pre.close();
-                if (connection != null)
-                    connection.close();
-                System.out.println("数据库连接已关闭！");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            JdbcUtil.free(resultSet, pre, connection);
         }
 
+        return dataList;
     }
 
 }

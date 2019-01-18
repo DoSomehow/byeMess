@@ -43,11 +43,11 @@ public class GmoView extends AbstractViewPanel {
 
             //
             GmoGen gmoGen = new GmoGen();
-            ResultVO<Object> result = gmoGen.generateCode(tableName);
+            ResultVO result = gmoGen.generateCode(tableName);
             if(result.getSuccess()){
-                JOptionPane.showMessageDialog(null, "生成成功！", "提示", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, result.getMessage(), "提示", JOptionPane.INFORMATION_MESSAGE);
             }else{
-                JOptionPane.showMessageDialog(null, "生成失败！" + result.getMessage(), "提示", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, result.getMessage(), "提示", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }

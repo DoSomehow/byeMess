@@ -15,6 +15,6 @@ public interface GenCode {
      * @param tableName
      * @return java.util.Map
      */
-    ResultVO<?> generateCode(String tableName);
+    ResultVO generateCode(String tableName);
 
 }
