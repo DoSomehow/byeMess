@@ -50,7 +50,6 @@ public class DsView extends AbstractViewPanel {
         contentPane.add(saveBtn);
 
 
-
         /*
         gridx = 2; // X2
         gridy = 0; // Y0
@@ -65,77 +64,118 @@ public class DsView extends AbstractViewPanel {
         ipady = 0; // 组件内部填充空间，即给组件的最小高度添加多大的空间
         new GridBagConstraints(gridx, gridy, gridwidth, gridheight, weightx, weighty, anchor, fill, insert, ipadx, ipady);
         */
+        /*
+        gbc.fill = GridBagConstraints.BOTH;
+        该方法是为了设置如果组件所在的区域比组件本身要大时的显示情况
+        NONE：不调整组件大小。
+        HORIZONTAL：加宽组件，使它在水平方向上填满其显示区域，但是不改变高度。
+        VERTICAL：加高组件，使它在垂直方向上填满其显示区域，但是不改变宽度。
+        BOTH：使组件完全填满其显示区域。
+        */
+        /*
+        gbc.gridwidth = 1;//该方法是设置组件水平所占用的格子数，如果为0，就说明该组件是该行的最后一个
+        gbc.gridheight = 1;
+        gbc.weightx = 0.3;//该方法设置组件水平的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
+        gbc.weighty = 0;//该方法设置组件垂直的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
+        */
 
 
         //定义一个GridBagConstraints，是用来控制添加进的组件的显示位置
-        GridBagConstraints gbc= new GridBagConstraints();
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
-        //该方法是为了设置如果组件所在的区域比组件本身要大时的显示情况
-        //NONE：不调整组件大小。
-        //HORIZONTAL：加宽组件，使它在水平方向上填满其显示区域，但是不改变高度。
-        //VERTICAL：加高组件，使它在垂直方向上填满其显示区域，但是不改变宽度。
-        //BOTH：使组件完全填满其显示区域。
-        gbc.fill = GridBagConstraints.BOTH;
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        //IP
         gbc.gridwidth = 1;//该方法是设置组件水平所占用的格子数，如果为0，就说明该组件是该行的最后一个
         gbc.gridheight = 1;
-        gbc.weightx = 0;//该方法设置组件水平的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
+        gbc.weightx = 0.3;//该方法设置组件水平的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
         gbc.weighty = 0;//该方法设置组件垂直的拉伸幅度，如果为0就说明不拉伸，不为0就随着窗口增大进行拉伸，0到1之间
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(ipLabel, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
-        gbc.weightx = 0;
+        gbc.weightx = 0.7;
         gbc.weighty = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(ipTextField, gbc);
+
+        //端口
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(portLabel, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(portTextField, gbc);
+
+        //SID
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(sidLabel, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(sidTextField, gbc);
+
+        //用户名
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(userNameLabel, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(userNameTextField, gbc);
+
+        //密码
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(pwdLabel, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(pwdField, gbc);
+
+        //测试 & 确定
+        gbc.fill = GridBagConstraints.NONE;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.EAST;
         layout.setConstraints(pingBtn, gbc);
-        gbc.gridwidth = 0;
+
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         layout.setConstraints(saveBtn, gbc);
 
         //给按钮添加事件
