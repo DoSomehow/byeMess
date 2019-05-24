@@ -3,6 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/byeMess_jar</output-path>
     <root id="archive" name="byeMess.jar">
       <element id="module-output" name="byeMess" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/lib/freemarker.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/lib/ojdbc14_11g.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
